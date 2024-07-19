@@ -1,0 +1,9 @@
+numpy
+pandas
+scikit-learn
+opencv-python
+flask
+cassandradb
+cassandra-driver
+keras 
+tensorflow
