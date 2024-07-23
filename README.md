@@ -7,9 +7,12 @@ The dataset used in this project consists of facial images and their correspondi
 
 Dataset Details
 Facial Images: The dataset contains images of individuals' faces. Each image is associated with a unique filename.
+
 BMI Values: Each image has a corresponding BMI value. BMI is calculated as weight in kilograms divided by the square of height in meters (kg/m²).
+
 Columns:
 filename: The name of the image file.
 BMI: The Body Mass Index of the individual in the image.
+
 Usage:
 The facial images are loaded and preprocessed using OpenCV and Keras. The images are resized and normalized before being fed into the CNN model for training and prediction. The BMI values are used as the target variable for model training.
