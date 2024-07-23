@@ -19,10 +19,10 @@ BMI: The Body Mass Index of the individual in the image.
 Usage:
 The facial images are loaded and preprocessed using OpenCV and Keras. The images are resized and normalized before being fed into the CNN model for training and prediction. The BMI values are used as the target variable for model training.
 
-##Webpage link
+## Webpage link
 AWS: http://ec2-3-25-80-164.ap-southeast-2.compute.amazonaws.com
 
-##Technical Aspects
+## Technical Aspects
 Python 3.9 and more
 Important Libraries: sklearn, pandas, numpy, matplotlib, TTensorflow & seaborn
 Front-end: HTML, CSS
