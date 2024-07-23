@@ -74,7 +74,7 @@ Verify the data insertion by querying the table and printing the results.
 ![Screenshot 2024-07-23 204339](https://github.com/user-attachments/assets/b75722ca-4af5-4eaa-be43-1233763a64fe)
 ![Screenshot 2024-07-23 204323](https://github.com/user-attachments/assets/9abb1e86-0685-4a26-80ad-0c3c2309d5ac)
 
-##Project Documents
+## Project Documents
 HLD: https://github.com/RanjithBV/FaceImage_BMI_Prediction/blob/main/Documents/High%20level%20design.pdf
 
 LLD: https://github.com/RanjithBV/FaceImage_BMI_Prediction/blob/main/Documents/Low%20Level%20Design.pdf
