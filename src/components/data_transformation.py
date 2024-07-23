@@ -1,12 +1,14 @@
+import os
 import sys
 from dataclasses import dataclass
-
 import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
+from torchvision import transforms
+from PIL import Image
 
 from src.exception import CustomException
 from src.logger import logging
@@ -25,10 +27,8 @@ class DataTransformation:
         This function is responsible for data transformation.
         '''
         try:
-            # Assuming 'height' and 'weight' are numerical features for BMI prediction
             numerical_columns = ["height", "weight"]
 
-            # Create a pipeline for numerical data
             num_pipeline = Pipeline(
                 steps=[
                     ("imputer", SimpleImputer(strategy="median")),
@@ -38,7 +38,6 @@ class DataTransformation:
 
             logging.info(f"Numerical columns: {numerical_columns}")
 
-            # Define the ColumnTransformer
             preprocessor = ColumnTransformer(
                 [
                     ("num_pipeline", num_pipeline, numerical_columns)
@@ -47,6 +46,19 @@ class DataTransformation:
 
             return preprocessor
 
+        except Exception as e:
+            raise CustomException(e, sys)
+
+    def load_image(self, filename):
+        image_path = os.path.join(r'C:\bmi\notebook\data\images', filename)
+        try:
+            image = Image.open(image_path).convert('RGB')
+            transform = transforms.Compose([
+                transforms.Resize((128, 128)),
+                transforms.ToTensor()
+            ])
+            image = transform(image)
+            return image
         except Exception as e:
             raise CustomException(e, sys)
 
@@ -61,8 +73,9 @@ class DataTransformation:
 
             preprocessing_obj = self.get_data_transformer_object()
 
-            target_column_name = "bmi"  # Assuming 'bmi' is the target variable
+            target_column_name = "bmi"
             numerical_columns = ["height", "weight"]
+            filename_column = "filename"
 
             input_feature_train_df = train_df.drop(columns=[target_column_name], axis=1)
             target_feature_train_df = train_df[target_column_name]
@@ -70,17 +83,18 @@ class DataTransformation:
             input_feature_test_df = test_df.drop(columns=[target_column_name], axis=1)
             target_feature_test_df = test_df[target_column_name]
 
-            logging.info(f"Applying preprocessing object on training dataframe and testing dataframe.")
+            logging.info("Applying preprocessing object on numerical features.")
 
-            input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df)
-            input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df)
+            input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df[numerical_columns])
+            input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df[numerical_columns])
 
-            train_arr = np.c_[
-                input_feature_train_arr, np.array(target_feature_train_df)
-            ]
-            test_arr = np.c_[
-                input_feature_test_arr, np.array(target_feature_test_df)
-            ]
+            logging.info("Loading and transforming images.")
+
+            train_images = np.array([self.load_image(filename) for filename in train_df[filename_column]])
+            test_images = np.array([self.load_image(filename) for filename in test_df[filename_column]])
+
+            train_arr = np.hstack((input_feature_train_arr, train_images.reshape(len(train_images), -1)))
+            test_arr = np.hstack((input_feature_test_arr, test_images.reshape(len(test_images), -1)))
 
             logging.info(f"Saved preprocessing object.")
 
