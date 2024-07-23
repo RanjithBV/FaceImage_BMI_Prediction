@@ -38,45 +38,29 @@ Activate the environment - conda activate venv
 Install the packages - pip install -r requirements.txt
 Run the app - python run app.py
 
-1. Data Loading
-a. Load Data from CSV and Images
-The first step is to load the data from the CSV file and corresponding images from the specified folder.
-
-python
-Copy code
-def load_data(image_folder, csv_file):
-    data = []
-    labels = []
-    df = pd.read_csv(csv_file)
-
-    print(f"Loaded CSV file: {df.shape[0]} records")
-
-    for index, row in df.iterrows():
-        image_path = os.path.join(image_folder, row['filename'])
-
 
 ## Workflow
 This workflow describes the process of predicting BMI from facial images, from data loading to model training and saving predictions in a Cassandra database.
 
-### Data Loading
+#### Data Loading
 
 Read the CSV file containing the filenames of the images and their corresponding BMI values.
 For each entry in the CSV, load the corresponding image from the specified folder.
 Preprocess the images by resizing and converting them to arrays.
 Normalize the image data and convert BMI values to a numerical array.
-### Data Preprocessing
+#### Data Preprocessing
 Split the dataset into training and testing sets to evaluate the model's performance.
-### Model Development
+#### Model Development
 Create a Convolutional Neural Network (CNN) model with multiple convolutional layers, pooling layers, and dense layers.
 Configure the model with an appropriate optimizer, loss function, and evaluation metrics.
-### Model Training
+#### Model Training
 Train the model using the training dataset with a specified number of epochs and batch size.
 Validate the model using the testing dataset to monitor performance and avoid overfitting.
-### Model Evaluation
+#### Model Evaluation
 Assess the model's performance using Mean Absolute Error (MAE) and other relevant metrics.
-### Save the Model
+#### Save the Model
 Save the trained model to a file for future use or deployment.
-### Store Predictions in Cassandra Database
+#### Store Predictions in Cassandra Database
 Connect to Cassandra Database:
 Establish a connection to the Cassandra database using secure connection details.
 Create Database Table:
@@ -85,3 +69,6 @@ Insert Data into Table:
 Insert the predictions along with the image paths and actual BMI values into the Cassandra database.
 Query Data:
 Verify the data insertion by querying the table and printing the results.
+
+## User Interface
+![Screenshot 2024-07-23 204339](https://github.com/user-attachments/assets/b75722ca-4af5-4eaa-be43-1233763a64fe)
