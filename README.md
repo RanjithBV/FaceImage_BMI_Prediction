@@ -11,7 +11,9 @@ Facial Images: The dataset contains images of individuals' faces. Each image is 
 BMI Values: Each image has a corresponding BMI value. BMI is calculated as weight in kilograms divided by the square of height in meters (kg/m²).
 
 Columns:
+
 filename: The name of the image file.
+
 BMI: The Body Mass Index of the individual in the image.
 
 Usage:
