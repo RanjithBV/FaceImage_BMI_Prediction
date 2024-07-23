@@ -22,13 +22,12 @@ class DataTransformation:
     def __init__(self):
         self.data_transformation_config = DataTransformationConfig()
 
-    def get_data_transformer_object(self):
+    def get_data_transformer_object(self, numerical_features):
         '''
-        This function is responsible for data transformation.
+        This function is responsible for data transformation for numerical features.
         '''
         try:
-            numerical_columns = ["height", "weight"]
-
+            # Create a pipeline for numerical features
             num_pipeline = Pipeline(
                 steps=[
                     ("imputer", SimpleImputer(strategy="median")),
@@ -36,11 +35,12 @@ class DataTransformation:
                 ]
             )
 
-            logging.info(f"Numerical columns: {numerical_columns}")
+            logging.info(f"Numerical columns: {numerical_features}")
 
+            # Define the ColumnTransformer
             preprocessor = ColumnTransformer(
                 [
-                    ("num_pipeline", num_pipeline, numerical_columns)
+                    ("num_pipeline", num_pipeline, numerical_features)
                 ]
             )
 
@@ -62,21 +62,22 @@ class DataTransformation:
         except Exception as e:
             raise CustomException(e, sys)
 
-    def initiate_data_transformation(self, train_path, test_path):
+    def initiate_data_transformation(self, train_path, test_path, numerical_features):
         try:
+            # Load datasets
             train_df = pd.read_csv(train_path)
             test_df = pd.read_csv(test_path)
 
             logging.info("Read train and test data completed")
 
+            # Initialize preprocessing object
             logging.info("Obtaining preprocessing object")
-
-            preprocessing_obj = self.get_data_transformer_object()
+            preprocessing_obj = self.get_data_transformer_object(numerical_features)
 
             target_column_name = "bmi"
-            numerical_columns = ["height", "weight"]
             filename_column = "filename"
 
+            # Split into input features and target
             input_feature_train_df = train_df.drop(columns=[target_column_name], axis=1)
             target_feature_train_df = train_df[target_column_name]
 
@@ -85,16 +86,23 @@ class DataTransformation:
 
             logging.info("Applying preprocessing object on numerical features.")
 
-            input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df[numerical_columns])
-            input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df[numerical_columns])
+            # Transform numerical features
+            input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df[numerical_features])
+            input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df[numerical_features])
 
             logging.info("Loading and transforming images.")
 
+            # Transform images
             train_images = np.array([self.load_image(filename) for filename in train_df[filename_column]])
             test_images = np.array([self.load_image(filename) for filename in test_df[filename_column]])
 
-            train_arr = np.hstack((input_feature_train_arr, train_images.reshape(len(train_images), -1)))
-            test_arr = np.hstack((input_feature_test_arr, test_images.reshape(len(test_images), -1)))
+            # Flatten images
+            train_images_flattened = train_images.reshape(len(train_images), -1)
+            test_images_flattened = test_images.reshape(len(test_images), -1)
+
+            # Combine numerical and image features
+            train_arr = np.hstack((input_feature_train_arr, train_images_flattened))
+            test_arr = np.hstack((input_feature_test_arr, test_images_flattened))
 
             logging.info(f"Saved preprocessing object.")
 
@@ -111,4 +119,3 @@ class DataTransformation:
 
         except Exception as e:
             raise CustomException(e, sys)
-
